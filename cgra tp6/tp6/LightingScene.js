@@ -1,0 +1,437 @@
+var degToRad = Math.PI / 180.0;
+
+var BOARD_WIDTH = 6.0;
+var BOARD_HEIGHT = 4.0;
+
+var BOARD_A_DIVISIONS = 30;
+var BOARD_B_DIVISIONS = 100;
+
+function LightingScene() {
+	CGFscene.call(this);
+}
+
+LightingScene.prototype = Object.create(CGFscene.prototype);
+LightingScene.prototype.constructor = LightingScene;
+
+LightingScene.prototype.init = function(application) {
+	CGFscene.prototype.init.call(this, application);
+	
+	this.option1=true;
+	this.option2=false;
+	this.speed=3;
+
+	this.initCameras();
+
+	this.initLights();
+
+	this.gl.clearColor(65/255,105/255,225/255, 1.0);
+	this.gl.clearDepth(100.0);
+	this.gl.enable(this.gl.DEPTH_TEST);
+	this.gl.enable(this.gl.CULL_FACE);
+	this.gl.depthFunc(this.gl.LEQUAL);
+
+	this.axis = new CGFaxis(this);
+
+	// Scene elements
+	//this.table = new MyTable(this);
+	//this.wall = new Plane(this);
+	//this.floor = new MyQuad(this,0,10,0,12);
+	//this.PrismColumn = new MyPrism(this, 8, 20);
+	//this.CylinColumn = new MyCylinder(this, 8, 20);
+	//this.lamp = new myLamp(this, 8, 20);
+	//this.leftWall = new MyQuad(this,-1,2,-0.5,1.5);
+	
+
+
+	//Submarine Stuff
+	this.clock = new MyClock(this);
+	this.oceanBottom = new MyQuad(this,0,10,0,12);
+	this.floor = new MyQuad(this,0,10,0,12);
+	this.poste = new MyCylinder(this, 10, 12);
+	this.submarine = new MySubmarine(this);
+
+
+	
+	//this.boardA = new Plane(this, BOARD_A_DIVISIONS, -0.25, 1.25,0, 1);
+	//this.boardB = new Plane(this, BOARD_B_DIVISIONS);
+
+	// Materials
+	this.materialDefault = new CGFappearance(this);
+	/*
+	this.materialA = new CGFappearance(this);
+	this.materialA.setAmbient(0.3,0.3,0.3,1);
+	this.materialA.setDiffuse(0.6,0.6,0.6,1);
+	this.materialA.setSpecular(0,0.2,0.8,1);
+	this.materialA.setShininess(120);
+
+	this.materialB = new CGFappearance(this);
+	this.materialB.setAmbient(0.3,0.3,0.3,1);
+	this.materialB.setDiffuse(0.6,0.6,0.6,1);
+	this.materialB.setSpecular(0.8,0.8,0.8,1);	
+	this.materialB.setShininess(120);
+
+	this.parede = new CGFappearance(this);
+	this.parede.setAmbient(0.3,0.3,0.3,1);
+	//this.parede.setDiffuse(1,0.9372,0.8353,1);
+	this.parede.setDiffuse(1,1,1,1);
+	this.parede.setSpecular(0.5,0.5,0.5,1);
+	this.parede.setShininess(120);
+
+	this.chao = new CGFappearance(this);
+	this.chao.setAmbient(0.3,0.3,0.3,1);
+	this.chao.setDiffuse(0,0,0.545,1);
+	this.chao.setSpecular(0.8,0.8,0.8,1);	
+	this.chao.setShininess(120);
+	*/
+
+	this.enableTextures(true);
+
+
+	//Textures
+
+	this.floorAppearance = new CGFappearance(this);
+	this.floorAppearance.loadTexture("../resources/images/floor.png");
+	this.floorAppearance.setSpecular(0.1,0.1,0.1,1);
+	this.floorAppearance.setShininess(10);
+	this.floorAppearance.setDiffuse(0.9,0.9,0.9,1);	
+
+	/*
+	this.windowAppearance = new CGFappearance(this);
+	this.windowAppearance.loadTexture("../resources/images/window.png");
+	this.windowAppearance.setSpecular(0.1,0.1,0.1,1);
+	this.windowAppearance.setShininess(10);
+	this.windowAppearance.setDiffuse(0.9,0.9,0.9,1);
+	this.windowAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
+
+	this.slidesAppearance = new CGFappearance(this);
+	this.slidesAppearance.loadTexture("../resources/images/slides.png");
+	this.slidesAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+	this.slidesAppearance.setSpecular(0.1,0.1,0.1,1);
+	this.slidesAppearance.setShininess(10);
+	this.slidesAppearance.setDiffuse(0.9,0.9,0.9,1);	
+
+	this.boardAppearance = new CGFappearance(this);
+	this.boardAppearance.loadTexture("../resources/images/board.png");
+	this.boardAppearance.setSpecular(0.5,0.5,0.5,1);
+	this.boardAppearance.setShininess(120);
+	this.boardAppearance.setDiffuse(0.4,0.4,0.4,1);	
+
+
+	this.WallAppearance = new CGFappearance(this);
+	this.WallAppearance.loadTexture("../resources/images/Wall.png");
+	this.WallAppearance.setSpecular(0.4,0.4,0.4,1);
+	this.WallAppearance.setShininess(100);
+	this.WallAppearance.setDiffuse(0.9,0.9,0.9,1);
+
+	this.ColumnAppearance = new CGFappearance(this);
+	this.ColumnAppearance.loadTexture("../resources/images/ColumnTexture.png");
+	this.ColumnAppearance.setSpecular(0.5,0.5,0.5,1);
+	this.ColumnAppearance.setShininess(80);
+	this.ColumnAppearance.setDiffuse(0.8,0.8,0.8,1);
+	*/
+
+	this.OceanAppearance = new CGFappearance(this);
+	this.OceanAppearance.loadTexture("../resources/images/Fundo.png");
+	this.OceanAppearance.setSpecular(0.5,0.5,0.5,1);
+	this.OceanAppearance.setShininess(80);
+	this.OceanAppearance.setDiffuse(0.8,0.8,0.8,1);	
+	//this.OceanAppearance.setTextureWrap('REPEAT', 'REPEAT');
+
+	this.PosteApperance = new CGFappearance(this);
+	this.PosteApperance.loadTexture("../resources/images/poste.png");
+	this.PosteApperance.setSpecular(0.1,0.1,0.1,1);
+	this.PosteApperance.setShininess(10);
+	this.PosteApperance.setDiffuse(0.9,0.9,0.9,1);	
+	
+	this.setUpdatePeriod(100);
+
+	
+};
+
+LightingScene.prototype.initCameras = function() {
+	this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(30, 30, 30), vec3.fromValues(0, 0, 0));
+};
+
+LightingScene.prototype.initLights = function() {
+	this.setGlobalAmbientLight(0,0,0, 1.0);
+	
+	// Positions for four lights
+	this.lights[0].setPosition(4, 6, 1, 1);
+	this.lights[0].setVisible(false); // show marker on light position (different from enabled)
+	
+	this.lights[1].setPosition(10.5, 6.0, 1.0, 1.0);
+	this.lights[1].setVisible(false); // show marker on light position (different from enabled)
+
+	this.lights[2].setPosition(10.5, 6.0, 5.0, 1.0);
+	this.lights[2].setVisible(false); // show marker on light position (different from enabled)
+	
+	this.lights[3].setPosition(4, 6.0, 5.0, 1.0);
+	this.lights[3].setVisible(false); // show marker on light position (different from enabled)
+
+	this.lights[4].setPosition(0, 4.0, 7.0, 1.0);
+	this.lights[4].setVisible(false); // show marker on light position (different from enabled)
+	
+
+	this.lights[0].setAmbient(0, 0, 0, 1);
+	this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[0].setSpecular(1.0, 1.0, 0, 1.0);
+	this.lights[0].enable();
+
+	this.lights[1].setAmbient(0, 0, 0, 1);
+	this.lights[1].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[1].enable();
+
+	this.lights[2].setAmbient(0, 0, 0, 1);
+	this.lights[2].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[2].setSpecular(1.0, 1.0, 1.0, 1.0);
+	this.lights[2].setConstantAttenuation(0);
+	this.lights[2].setLinearAttenuation(1.0);
+	this.lights[2].setQuadraticAttenuation(0);
+	this.lights[2].enable();
+
+	
+	this.lights[3].setAmbient(0, 0, 0, 1);
+	this.lights[3].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[3].setSpecular(1.0, 1.0, 0, 1.0);
+	this.lights[3].setConstantAttenuation(0);
+	this.lights[3].setLinearAttenuation(0);
+	this.lights[3].setQuadraticAttenuation(0.2);
+	this.lights[3].enable();
+
+	this.lights[4].setAmbient(0, 0, 0, 1);
+	this.lights[4].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[4].setSpecular(0.6, 0.6, 0.6, 1.0);
+	this.lights[4].enable();
+
+
+	
+};
+
+LightingScene.prototype.updateLights = function() {
+	for (i = 0; i < this.lights.length; i++)
+		this.lights[i].update();
+}
+
+
+LightingScene.prototype.display = function() {
+	// ---- BEGIN Background, camera and axis setup
+
+	// Clear image and depth buffer everytime we update the scene
+	this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+	this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+	// Initialize Model-View matrix as identity (no transformation)
+	this.updateProjectionMatrix();
+	this.loadIdentity();
+
+	// Apply transformations corresponding to the camera position relative to the origin
+	this.applyViewMatrix();
+
+	// Update all lights used
+	this.updateLights();
+
+	// Draw axis
+	this.axis.display();
+
+	this.materialDefault.apply();
+
+	// ---- END Background, camera and axis setup
+
+	
+	// ---- BEGIN Geometric transformation section
+
+	// ---- END Geometric transformation section
+
+
+	// ---- BEGIN Primitive drawing section
+/*
+	//lamp
+	this.pushMatrix();
+       this.translate(11.5, 4.5, 7.5);
+	   this.rotate(-90 * degToRad, 1.0, 0.0, 0.0);
+	   this.scale(0.8, 0.8, 0.8);
+		this.lamp.display();
+	this.popMatrix();
+
+	this.pushMatrix();
+	  this.translate(11.5, 3.5, 7.5);
+	   this.rotate(-90 * degToRad, 1.0, 0.0, 0.0);
+	   this.scale(0.5, 0.5, 1);
+	   this.CylinColumn.display();
+	this.popMatrix();
+
+
+
+
+	//Clock
+	this.pushMatrix();
+
+     
+      	this.translate(7.25,7.3,0);
+	   //	this.rotate(-90 * degToRad, 1.0, 0.0, 0.0);
+	  // 	this.scale(1, 1, 8);
+	this.clock.display();	   
+	this.popMatrix();
+
+
+
+	
+
+	   
+	
+	//1 Cylindrical Column
+	this.pushMatrix();
+  		this.ColumnAppearance.apply();
+       	this.translate(1, 0, 14);
+	   	this.rotate(-90 * degToRad, 1.0, 0.0, 0.0);
+	   	this.scale(1, 1, 8);
+	   	this.CylinColumn.display();	   
+	this.popMatrix();
+
+
+	//2 Cylindrical Column
+	this.pushMatrix();
+	   this.translate(14, 0, 14);
+	   this.rotate(-90 * degToRad, 1.0, 0.0, 0.0);
+	   this.scale(1, 1, 8);
+	   this.CylinColumn.display();
+	this.popMatrix();
+	
+
+	// Floor
+	this.pushMatrix();
+	this.chao.apply();
+		this.floorAppearance.apply();
+		this.translate(7.5, 0, 7.5);
+		this.rotate(-90 * degToRad, 1, 0, 0);
+		this.scale(15, 15, 0.2);
+		this.floor.display();
+	this.popMatrix();
+	this.materialDefault.apply();
+
+
+	// Left Wall
+	//this.pushMatrix();
+	//this.parede.apply();
+	//	this.translate(0, 4, 7.5);
+	//	this.rotate(90 * degToRad, 0, 1, 0);
+	//	this.scale(15, 8, 0.2);
+	//	this.wall.display();
+	//this.popMatrix();
+
+	// Left Wall
+	this.pushMatrix();
+	this.windowAppearance.apply();
+		this.translate(0, 4, 7.5);
+		this.rotate(90 * degToRad, 0, 1, 0);
+		this.scale(15, 8, 0.2);
+		this.leftWall.display();
+	this.popMatrix();
+	this.materialDefault.apply();
+
+
+
+	// Plane Wall
+	this.pushMatrix();
+	this.WallAppearance.apply();
+		this.translate(7.5, 4, 0);
+		this.scale(15, 8, 0.2);
+		this.wall.display();
+	this.popMatrix();
+
+	// First Table
+	this.pushMatrix();
+		
+
+		this.translate(5, 0, 8);
+		this.table.display();
+	this.popMatrix();
+
+	// Second Table
+	this.pushMatrix();
+		this.translate(12, 0, 8);
+		this.table.display();
+	this.popMatrix();
+
+	// Board A
+	this.pushMatrix();
+		this.slidesAppearance.apply();
+		this.translate(4, 4.5, 0.2);
+		this.scale(BOARD_WIDTH, BOARD_HEIGHT, 1);		
+		//this.materialA.apply();
+		this.boardA.display();
+	this.popMatrix();
+
+	// Board B
+	this.pushMatrix();
+		this.boardAppearance.apply();
+		this.translate(10.5, 4.5, 0.2);
+		this.scale(BOARD_WIDTH, BOARD_HEIGHT, 1);
+		
+		//this.materialB.apply();
+		this.boardB.display();
+	this.popMatrix();
+
+	// ---- END Primitive drawing section
+*/
+	// Oceam Bottom
+	this.pushMatrix();
+		this.translate(7.5, 0, 7.5);
+		this.rotate(-90 * degToRad, 1, 0, 0);
+		this.scale(15, 15, 0.2);
+		this.OceanAppearance.apply();
+		this.floor.display();
+	this.popMatrix();
+	this.materialDefault.apply();
+
+
+	// Submarine
+	this.pushMatrix();
+		this.translate(7.5, 0, 7);
+		//this.translate(5, 4, 8);
+		this.rotate(degToRad*(175), 0,1,0);
+		//this.scale(BOARD_WIDTH, BOARD_HEIGHT, 1);
+		//this.OceanAppearance.apply();
+		//this.materialB.apply();
+		this.submarine.display();
+	this.popMatrix();
+	this.materialDefault.apply();
+		
+		// Poste
+	this.pushMatrix();
+		this.translate(8, 0, 0);
+		this.rotate(-Math.PI/2, 1,0,0);
+		this.scale(0.3, 0.3, 4.4);
+		//this.OceanAppearance.apply();
+		//this.materialB.apply();
+		this.PosteApperance.apply();
+		this.poste.display();
+	this.popMatrix();
+
+	
+	//Clock
+	this.pushMatrix();
+
+     
+      	this.translate(8,5,0);
+	   //	this.rotate(-90 * degToRad, 1.0, 0.0, 0.0);
+	  // 	this.scale(1, 1, 8);
+	this.clock.display();	   
+	this.popMatrix();
+
+
+
+
+
+
+};
+
+
+LightingScene.prototype.update = function(currTime) {
+	this.clock.update(currTime);
+
+}
+
+LightingScene.prototype.doSomething = function (){
+	console.log("Doing something..."); 
+	};
