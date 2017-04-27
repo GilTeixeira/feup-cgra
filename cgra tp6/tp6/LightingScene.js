@@ -88,14 +88,14 @@ LightingScene.prototype.init = function(application) {
 
 
 	//Textures
-
+/*
 	this.floorAppearance = new CGFappearance(this);
 	this.floorAppearance.loadTexture("../resources/images/floor.png");
 	this.floorAppearance.setSpecular(0.1,0.1,0.1,1);
 	this.floorAppearance.setShininess(10);
 	this.floorAppearance.setDiffuse(0.9,0.9,0.9,1);	
 
-	/*
+	
 	this.windowAppearance = new CGFappearance(this);
 	this.windowAppearance.loadTexture("../resources/images/window.png");
 	this.windowAppearance.setSpecular(0.1,0.1,0.1,1);
@@ -435,3 +435,15 @@ LightingScene.prototype.update = function(currTime) {
 LightingScene.prototype.doSomething = function (){
 	console.log("Doing something..."); 
 	};
+
+LightingScene.prototype.rotateSubmarine = function (degrees){
+
+};
+
+LightingScene.prototype.moveSubmarine = function (direction){
+	console.log(this.submarine);
+	this.submarine.move(direction*0.3);
+
+};
+
+
